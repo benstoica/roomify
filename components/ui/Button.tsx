@@ -9,8 +9,8 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 const Button = (props: ButtonProps) => {
   const combinedClassName = [
     "btn",
-    `btn--${props.variant}`,
-    `btn--${props.size}`,
+    `btn--${props.variant ?? "primary"}`,
+    `btn--${props.size ?? "md"}`,
     props.fullWidth ? "btn--full" : "",
     props.className ?? "",
   ]
