@@ -95,7 +95,8 @@ const Upload = (props: UploadProps) => {
     }
 
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile?.type.startsWith("image/")) {
+    const allowedTypes = ["image/jpeg", "image/png"];
+    if (droppedFile && allowedTypes.includes(droppedFile.type)) {
       processFile(droppedFile);
     }
   };
@@ -118,7 +119,7 @@ const Upload = (props: UploadProps) => {
           className={`dropzone ${isDragging ? "is-dragging" : ""}`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          onDrag={handleDrop}>
+          onDrop={handleDrop}>
           <input
             type="file"
             className="drop-input"
