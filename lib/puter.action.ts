@@ -1,4 +1,9 @@
 import puter from "@heyputer/puter.js";
+import {
+  getOrCreateHostingConfig,
+  uploadImageToHosting,
+} from "./puter.hosting";
+import { isHostedUrl } from "./utils";
 
 export const signIn = async () => await puter.auth.signIn();
 
@@ -8,6 +13,63 @@ export const getCurrentUser = async () => {
   try {
     return await puter.auth.getUser();
   } catch {
+    return null;
+  }
+};
+
+export const createProject = async ({
+  item,
+}: CreateProjectParams): Promise<DesignItem | null> => {
+  const projectId = item.id;
+
+  const hosting = await getOrCreateHostingConfig();
+
+  const hostedSource = projectId
+    ? await uploadImageToHosting({
+        hosting,
+        url: item.sourceImage,
+        projectId,
+        label: "source",
+      })
+    : null;
+
+  const hostedRender =
+    projectId && item.renderedImage
+      ? await uploadImageToHosting({
+          hosting,
+          url: item.renderedImage,
+          projectId,
+          label: "rendered",
+        })
+      : null;
+
+  const resolvedSource = hostedSource?.url || item.sourceImage;
+
+  if (!resolvedSource) {
+    console.warn("Missing source image, skipping save");
+    return null;
+  }
+
+  const resolvedRender = hostedRender?.url
+    ? hostedRender?.url
+    : item.renderedImage && isHostedUrl(item.renderedImage)
+      ? item.renderedImage
+      : undefined;
+
+  const payload: DesignItem = {
+    ...item,
+    sourceImage: resolvedSource,
+    renderedImage: resolvedRender ?? null,
+    sourcePath: item.sourcePath ?? null,
+    renderedPath: item.renderedPath ?? null,
+    publicPath: item.publicPath ?? null,
+  };
+
+  try {
+    // TODO: Call the puter worker to store the project in kv
+    return payload;
+  } catch (error) {
+    console.error("Failed to save project", error);
     return null;
   }
 };
