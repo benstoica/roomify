@@ -37,7 +37,7 @@ export default function Home() {
 
     if (!saved) {
       console.error("Failed to create project");
-      return false;
+      return;
     }
 
     setProjects((prev) => [saved, ...prev]);
@@ -49,8 +49,6 @@ export default function Home() {
         name: saved.name,
       },
     });
-
-    return true;
   };
 
   return (
