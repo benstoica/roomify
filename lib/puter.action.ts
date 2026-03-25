@@ -19,7 +19,7 @@ export const getCurrentUser = async () => {
 
 export const createProject = async ({
   item,
-}: CreateProjectParams): Promise<DesignItem | null | undefined> => {
+}: CreateProjectParams): Promise<DesignItem | null> => {
   const projectId = item.id;
 
   const hosting = await getOrCreateHostingConfig();
@@ -43,9 +43,7 @@ export const createProject = async ({
         })
       : null;
 
-  const resolvedSource =
-    hostedSource?.url ||
-    item.sourceImage;
+  const resolvedSource = hostedSource?.url || item.sourceImage;
 
   if (!resolvedSource) {
     console.warn("Missing source image, skipping save");
@@ -58,15 +56,8 @@ export const createProject = async ({
       ? item.renderedImage
       : undefined;
 
-  const {
-    sourcePath: _sourcePath,
-    renderedPath: _renderedPath,
-    publicPath: _publicPath,
-    ...rest
-  } = item;
-
-  const payload = {
-    ...rest,
+  const payload: DesignItem = {
+    ...item,
     sourceImage: resolvedSource,
     renderedImage: resolvedRender ?? null,
     sourcePath: item.sourcePath ?? null,

@@ -9,6 +9,9 @@ import {
   isHostedUrl,
 } from "./utils";
 
+const sanitizePathSegment = (segment: string): string =>
+  segment.replace(/[^a-zA-Z0-9_-]/g, "");
+
 export const getOrCreateHostingConfig =
   async (): Promise<HostingConfig | null> => {
     try {
@@ -43,6 +46,11 @@ export const uploadImageToHosting = async ({
   projectId,
   label,
 }: StoreHostedImageParams): Promise<HostedAsset | null> => {
+  const safeProjectId = sanitizePathSegment(projectId);
+  if (!safeProjectId) {
+    return null;
+  }
+
   if (!hosting || !url) {
     return null;
   }
@@ -69,7 +77,7 @@ export const uploadImageToHosting = async ({
 
     const contentType = resolved.contentType || resolved.blob.type || "";
     const ext = getImageExtension(contentType, url);
-    const dir = `projects/${projectId}`;
+    const dir = `projects/${safeProjectId}`;
     const filePath = `${dir}/${label}.${ext}`;
 
     const uploadFile = new File([resolved.blob], `${label}.${ext}`, {

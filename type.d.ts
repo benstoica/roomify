@@ -32,7 +32,7 @@ interface DesignItem {
   renderedPath: string | null;
   publicPath: string | null;
   timestamp: number;
-  ownderId: string | null;
+  ownerId: string | null;
   sharedBy: string | null;
   sharedAt: string | null;
   isPublic: boolean;
