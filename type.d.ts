@@ -42,3 +42,8 @@ interface CreateProjectParams {
   item: DesignItem;
   visibility?: "public" | "private";
 }
+
+interface Generate3DViewParams {
+  sourceImage: string;
+  projectId?: string | null;
+}
