@@ -118,7 +118,7 @@ export const getProjects = async () => {
     );
 
     if (!response.ok) {
-      console.error("Failed to fetch history", await response.text);
+      console.error("Failed to fetch history", await response.text());
       return [];
     }
 

@@ -20,11 +20,11 @@ export default function Home() {
   const isCreatingProjectRef = useRef(false);
 
   const handleUploadComplete = async (base64Image: string) => {
+    if (isCreatingProjectRef.current) {
+      return false;
+    }
+    isCreatingProjectRef.current = true;
     try {
-      if (isCreatingProjectRef.current) {
-        return false;
-      }
-      isCreatingProjectRef.current = true;
       const newId = Date.now().toString();
       const name = `Residence ${newId}`;
 
@@ -48,13 +48,7 @@ export default function Home() {
 
       setProjects((prev) => [saved, ...prev]);
 
-      navigate(`/visualizer/${saved.id}`, {
-        state: {
-          initialImage: saved.sourceImage,
-          initialRendered: saved.renderedImage ?? null,
-          name: saved.name,
-        },
-      });
+      navigate(`/visualizer/${saved.id}`);
 
       return true;
     } finally {
@@ -70,7 +64,7 @@ export default function Home() {
     };
 
     fetchProjects();
-  });
+  }, []);
 
   return (
     <div className="home">
